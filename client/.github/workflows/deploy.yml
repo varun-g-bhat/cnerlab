@@ -1,0 +1,78 @@
+# name: Deploy to Production
+
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build-deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       #checkout the repository
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       # Set up Node.js
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: "18"
+
+#       # Install dependencies
+#       - name: Install dependencies
+#         run: npm install
+
+#       # Build the application
+#       - name: Build application
+#         run: npm run build
+
+#       # Deploy to production server
+#       - name: Deploy to github pages
+#         uses: peaceiris/actions-gh-pages@v3
+#         with:
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
+#           publish_dir: dist
+
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the application
+      - name: Build application
+        run: npm run build
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist # Ensure it points to the dist folder
+          publish_branch: gh-pages # Push to the gh-pages branch
+          user_name: "github-actions" # Optional: specify the username
+          user_email: "github-actions@github.com" # Optional: specify the email
