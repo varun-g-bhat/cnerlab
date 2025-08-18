@@ -389,6 +389,7 @@ import Components from "./pages/Components/Components";
 import CartPage from "./pages/Cart/Cart";
 import PurchaseHistoryPage from "./pages/PurchaseHistory/PurchaseHistory";
 import Contact from "./pages/Contact/Contact";
+import ProfilePage from "./pages/Profile/Profile";
 
 import AdminDashboard from "./pages/admin/AdminDashboard/AdminDashboard";
 import AdminComponents from "./pages/admin/AdminComponents.tsx/AdminComponents";
@@ -514,6 +515,15 @@ const AppRouter = () => (
             element={
               <ProtectedRoute>
                 <PurchaseHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

@@ -134,8 +134,40 @@ const sendRejectedEmail = async (email: string, componentName: string) => {
   }
 };
 
+const sendPasswordEmail = async (email: string, password: string) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Welcome! Your Account Password",
+    html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #ffffff;">
+      <h2 style="color: #333333;">Welcome to CNER Lab!</h2>
+      <p style="font-size: 16px; color: #555555;">Hello,</p>
+      <p style="font-size: 16px; color: #555555;">Your account has been successfully created. Your login credentials are:</p>
+      <div style="margin: 30px 0; padding: 20px; background-color: #f9f9f9; border-left: 5px solid #4a90e2; border-radius: 8px;">
+        <p style="font-size: 16px; color: #333; margin: 0 0 10px 0;">Your password is:</p>
+        <div style="font-size: 20px; font-weight: bold; letter-spacing: 1px; color: #4a4a4a; background-color: #ffffff; padding: 12px 20px; border: 1px solid #ddd; border-radius: 5px; display: inline-block;">
+        ${password}
+        </div>
+        <p style="font-size: 14px; color: #777; margin-top: 10px;">Please change this password after logging in for security purposes.</p>
+      </div>
+      <p style="font-size: 16px; color: #555555;">You can now login to your account and start exploring our components.</p>
+      <p style="font-size: 16px; color: #555555;">Best regards,<br/>The CNER Lab Team</p>
+    </div>
+  `,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Password email sent:", info.response);
+  } catch (error) {
+    console.error("Error sending password email:", error);
+  }
+};
+
 export {
   sendVerificationEmail,
+  sendPasswordEmail,
   sendReminderEmail,
   sendApprovalEmail,
   sendRejectedEmail,

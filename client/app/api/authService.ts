@@ -11,6 +11,20 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
+// Add request interceptor to include auth token
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export const signUp = async (data: signupUser) => {
   return apiClient.post("/auth/signup", data);
 };
@@ -25,6 +39,14 @@ export const signIn = async (data: any) => {
 
 export const logoutUser = async () => {
   return apiClient.post("auth/logout");
+};
+
+export const getUserProfile = async () => {
+  return apiClient.get("/auth/profile");
+};
+
+export const updateUserProfile = async (data: any) => {
+  return apiClient.put("/auth/update-profile", data);
 };
 
 // export const forgotPassword = async (data:{email: string}) => {

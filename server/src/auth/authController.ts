@@ -2,11 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import createHttpError from "http-errors";
 import { prisma } from "../../prisma/client";
 import bcrypt from "bcryptjs";
-import generateOtp from "../helpers/generateOtp";
-import { sendVerificationEmail } from "../helpers/sendEmail";
+import { sendPasswordEmail } from "../helpers/sendEmail";
 import {
-  getOtpEmailVerification,
-  getOtpEmailVerificationById,
   getUserByEmail,
   getUserById,
   getUserRoleByUserId,
@@ -15,8 +12,8 @@ import { generateTokens } from "../helpers/generateTokens";
 import pkg from "jsonwebtoken";
 import { getRandomAvatar } from "@fractalsoftware/random-avatar-generator";
 import generatePassword from "../helpers/generatePassword";
-import { resolve } from "path";
 import extractUserIdFromRefreshToken from "../helpers/extractUserId";
+import extractUserIdFromAccessToken from "../helpers/extractUserIdFromAccessToken";
 
 const { verify } = pkg;
 
@@ -33,9 +30,6 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       );
       return next(error);
     }
-
-    // For Now Same for all users
-    // const password = "123456";
 
     const password = generatePassword();
 
@@ -59,28 +53,17 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
         email,
         password: hashedPassword,
         image: avatar,
+        emailVerified: new Date(), // Automatically verify email
       },
     });
 
     if (newUser) {
-      const verificationToken = generateOtp();
-
-      const tokenExpiration = new Date();
-      tokenExpiration.setMinutes(tokenExpiration.getMinutes() + 15);
-
-      await prisma.otpEmailVerification.create({
-        data: {
-          userId: newUser.id,
-          otp: verificationToken,
-          expireAt: tokenExpiration,
-        },
-      });
-
-      await sendVerificationEmail(newUser.email, verificationToken, password);
+      // Send password to user's email without OTP
+      await sendPasswordEmail(newUser.email, password);
 
       res.status(200).json({
-        message: "Sent verification email",
-        isVerified: false,
+        message: "Account created successfully! Password sent to your email.",
+        isVerified: true,
         success: true,
       });
       return;
@@ -106,37 +89,6 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
 
-    if (!user.emailVerified) {
-      const existingToken = await getOtpEmailVerificationById(user.id);
-
-      if (existingToken) {
-        await prisma.otpEmailVerification.delete({
-          where: { userId: user.id },
-        });
-      }
-
-      const Otpverification = generateOtp();
-
-      const tokenExpiration = new Date();
-      tokenExpiration.setHours(tokenExpiration.getMinutes() + 15);
-
-      await prisma.otpEmailVerification.create({
-        data: {
-          userId: user.id,
-          otp: Otpverification,
-          expireAt: tokenExpiration,
-        },
-      });
-
-      await sendVerificationEmail(user.email, Otpverification);
-      res.status(200).json({
-        message: "Sent verification email",
-        isVerified: false,
-        success: true,
-      });
-      return;
-    }
-
     if (!user.password) {
       return next(createHttpError(400, "Invalid credentials"));
     }
@@ -157,7 +109,6 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     console.log("Role:", user.role);
-
     console.log("User emailId:", user.email);
 
     res.json({
@@ -173,63 +124,6 @@ const signin = async (req: Request, res: Response, next: NextFunction) => {
   } catch (error) {
     console.log(error);
     return next(createHttpError(500, "Error while processing your request"));
-  }
-};
-
-const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
-  const { otp } = req.body;
-  try {
-    const Otpverification = await getOtpEmailVerification(otp);
-
-    if (Otpverification) {
-      const user = await getUserById(Otpverification?.userId);
-
-      if (user?.emailVerified) {
-        res.status(200).json({
-          Code: "ALREADY_VERIFIED",
-          message: "Email Already Verified",
-          success: true,
-        });
-        return;
-      }
-
-      const now = new Date();
-      if (now > Otpverification.expireAt) {
-        return next(
-          createHttpError(
-            400,
-            "We couldn't verify your email. The Otp may have expired or is invalid."
-          )
-        );
-      }
-
-      await prisma.user.update({
-        where: {
-          id: Otpverification.userId,
-        },
-        data: {
-          emailVerified: new Date(),
-        },
-      });
-      res.status(200).json({
-        Code: "VERIFIED",
-        message: "Email Verified Successfully",
-        success: true,
-      });
-    } else {
-      return next(
-        createHttpError(
-          400,
-          "We couldn't verify your email. The otp may have expired or is invalid."
-        )
-      );
-    }
-  } catch (err) {
-    console.log(err);
-
-    return next(
-      createHttpError(400, "Unknown error occurred during token verification.")
-    );
   }
 };
 
@@ -372,7 +266,7 @@ const updateUserProfile = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userId = extractUserIdFromRefreshToken(req);
+  const userId = extractUserIdFromAccessToken(req);
   if (!userId) {
     return next(createHttpError(401, "Unauthorized"));
   }
@@ -456,15 +350,45 @@ const updateUserRole = async (
   }
 };
 
+const getUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = extractUserIdFromAccessToken(req);
+  if (!userId) {
+    return next(createHttpError(401, "Unauthorized"));
+  }
+
+  try {
+    const user = await getUserById(userId);
+    if (!user) {
+      return next(createHttpError(404, "User not found"));
+    }
+
+    res.status(200).json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      image: user.image,
+      role: user.role,
+      createdAt: user.createdAt,
+    });
+  } catch (error) {
+    console.error(error);
+    return next(createHttpError(500, "Error fetching user profile"));
+  }
+};
+
 export {
   signup,
   signin,
-  verifyEmail,
   refreshToken,
   verifyUser,
   logoutUser,
   isAdmin,
   updateUserProfile,
+  getUserProfile,
   updateUserRole,
   getAllUsers,
 };

@@ -524,6 +524,8 @@ const Navbar: React.FC = () => {
 
   const handleLogout = async () => {
     await logoutUser();
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("role");
     dispatch(logout());
   };
 
@@ -712,9 +714,9 @@ const Navbar: React.FC = () => {
                   <DropdownMenuItem onClick={() => navigate("/purchases")}>
                     My Purchases
                   </DropdownMenuItem>
-{/*                   <DropdownMenuItem onClick={() => navigate("/edit-profile")}>
+                  <DropdownMenuItem onClick={() => navigate("/profile")}>
                     Edit Profile
-                  </DropdownMenuItem> */}
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />

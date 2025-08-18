@@ -67,6 +67,9 @@ function LoginForm({
       if (!response.data.isVerified) {
         setOtpVisible(true);
       } else {
+        // Store access token in localStorage
+        localStorage.setItem("accessToken", response.data.accessToken);
+
         store.dispatch(setAccessToken(response.data.accessToken));
         store.dispatch(persistLogin(response.data));
 
