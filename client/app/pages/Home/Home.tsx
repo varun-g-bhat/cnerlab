@@ -43,13 +43,13 @@ const Home: React.FC = () => {
         const [componentsResponse, requestsResponse, visitorsResponse] =
           await Promise.all([
             axios.get(
-              "https://cnerlab.onrender.com/api/v1/components/all/count"
+              "https://cnerlab-kf0v.onrender.com/api/v1/components/all/count"
             ),
             axios.get(
-              "https://cnerlab.onrender.com/api/v1/statistics/requestcount"
+              "https://cnerlab-kf0v.onrender.com/api/v1/statistics/requestcount"
             ),
             axios.get(
-              "https://cnerlab.onrender.com/api/v1/statistics/visitorcount"
+              "https://cnerlab-kf0v.onrender.com/api/v1/statistics/visitorcount"
             ),
           ]);
 

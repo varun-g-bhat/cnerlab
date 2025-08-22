@@ -51,17 +51,17 @@ const AdminPermission: React.FC = () => {
   const fetchPermissions = async () => {
     setLoading(true);
     try {
-      let url = "https://cnerlab.onrender.com/api/v1/permission/";
+      let url = "https://cnerlab-kf0v.onrender.com/api/v1/permission/";
 
       switch (activeTab) {
         case "pending":
-          url = "https://cnerlab.onrender.com/api/v1/permission/pending";
+          url = "https://cnerlab-kf0v.onrender.com/api/v1/permission/pending";
           break;
         case "approved":
-          url = "https://cnerlab.onrender.com/api/v1/permission/approved";
+          url = "https://cnerlab-kf0v.onrender.com/api/v1/permission/approved";
           break;
         case "rejected":
-          url = "https://cnerlab.onrender.com/api/v1/permission/rejected";
+          url = "https://cnerlab-kf0v.onrender.com/api/v1/permission/rejected";
           break;
       }
 
@@ -78,13 +78,13 @@ const AdminPermission: React.FC = () => {
     setProcessingId(permissionId);
     try {
       await axios.put(
-        `https://cnerlab.onrender.com/api/v1/permission/approve/${permissionId}`,
+        `https://cnerlab-kf0v.onrender.com/api/v1/permission/approve/${permissionId}`,
         { withCredentials: true }
       );
       toast.success("Permission approved successfully");
 
       await axios.post(
-        "https://cnerlab.onrender.com/api/v1/purchase/",
+        "https://cnerlab-kf0v.onrender.com/api/v1/purchase/",
         { permissionId },
         {
           withCredentials: true,
@@ -102,7 +102,7 @@ const AdminPermission: React.FC = () => {
     setProcessingId(permissionId);
     try {
       await axios.put(
-        `https://cnerlab.onrender.com/api/v1/permission/reject/${permissionId}`,
+        `https://cnerlab-kf0v.onrender.com/api/v1/permission/reject/${permissionId}`,
         { withCredentials: true }
       );
       toast.success("Permission rejected successfully");
@@ -154,7 +154,7 @@ const AdminPermission: React.FC = () => {
   const fetchAllPermissions = async () => {
     try {
       const allPermissions = await axios.get(
-        "https://cnerlab.onrender.com/api/v1/permission/"
+        "https://cnerlab-kf0v.onrender.com/api/v1/permission/"
       );
       setAllPermissions(allPermissions.data);
     } catch (error) {
