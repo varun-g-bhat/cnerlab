@@ -491,15 +491,7 @@ const AppRouter = () => (
           {/* Public and user routes */}
           <Route index element={<HomePage />} />
           <Route path="contact" element={<Contact />} />
-
-          <Route
-            path="components"
-            element={
-              <ProtectedRoute>
-                <Components />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="components" element={<Components />} />
 
           <Route
             path="cart"

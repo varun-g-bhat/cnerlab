@@ -537,7 +537,7 @@ const Navbar: React.FC = () => {
     ? `data:image/svg+xml;base64,${btoa(userProfile)}`
     : "";
 
-  const renderUserLinks = () => (
+  const renderPublicLinks = () => (
     <>
       <Link
         to="/"
@@ -558,16 +558,6 @@ const Navbar: React.FC = () => {
         Components
       </Link>
       <Link
-        to="/cart"
-        className={`transition-colors ${
-          isActive("/cart")
-            ? "text-blue-600 font-bold"
-            : "text-muted-foreground"
-        }`}
-      >
-        Cart
-      </Link>
-      <Link
         to="/contact"
         className={`transition-colors ${
           isActive("/contact")
@@ -580,8 +570,25 @@ const Navbar: React.FC = () => {
     </>
   );
 
+  const renderUserLinks = () => (
+    <>
+      {renderPublicLinks()}
+      <Link
+        to="/cart"
+        className={`transition-colors ${
+          isActive("/cart")
+            ? "text-blue-600 font-bold"
+            : "text-muted-foreground"
+        }`}
+      >
+        Cart
+      </Link>
+    </>
+  );
+
   const renderAdminLinks = () => (
     <>
+      {renderPublicLinks()}
       <Link
         to="/admin-dashboard"
         className={`transition-colors ${
@@ -650,7 +657,11 @@ const Navbar: React.FC = () => {
               />
               <span>CNER - LAB</span>
             </Link>
-            {isAdmin === "admin" ? renderAdminLinks() : renderUserLinks()}
+            {isLoggedIn
+              ? isAdmin === "admin"
+                ? renderAdminLinks()
+                : renderUserLinks()
+              : renderPublicLinks()}
           </nav>
 
           <Sheet>
@@ -666,7 +677,11 @@ const Navbar: React.FC = () => {
             </SheetTrigger>
             <SheetContent side="left" className="p-4">
               <nav className="grid gap-6 text-lg font-medium">
-                {isAdmin === "admin" ? renderAdminLinks() : renderUserLinks()}
+                {isLoggedIn
+                  ? isAdmin === "admin"
+                    ? renderAdminLinks()
+                    : renderUserLinks()
+                  : renderPublicLinks()}
               </nav>
             </SheetContent>
           </Sheet>

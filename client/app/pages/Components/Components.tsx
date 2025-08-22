@@ -12,9 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Plus, Minus, Package } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ShoppingCart, Plus, Minus, Package, Search } from "lucide-react";
 import { toast, Toaster } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 interface Component {
   _id: string;
@@ -26,16 +29,37 @@ interface Component {
 
 const Components: React.FC = () => {
   const [components, setComponents] = useState<Component[]>([]);
+  const [filteredComponents, setFilteredComponents] = useState<Component[]>([]);
   const [cart, setCart] = useState<Map<string, number>>(new Map());
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState<Map<string, number>>(new Map());
-  //   const toast = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const navigate = useNavigate();
+  const { isLoggedIn } = useSelector((state: RootState) => state.auth);
 
   const isActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
     fetchComponents();
   }, []);
+
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredComponents(components);
+    } else {
+      const filtered = components.filter(
+        (component) =>
+          component.componentName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          component.componentType
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+      );
+      setFilteredComponents(filtered);
+    }
+  }, [components, searchQuery]);
 
   const fetchComponents = async () => {
     try {
@@ -50,13 +74,22 @@ const Components: React.FC = () => {
     }
   };
 
-  const groupedComponents = components.reduce((acc, component) => {
+  const groupedComponents = filteredComponents.reduce((acc, component) => {
     if (!acc[component.componentType]) {
       acc[component.componentType] = [];
     }
     acc[component.componentType].push(component);
     return acc;
   }, {} as Record<string, Component[]>);
+
+  const checkAuthAndProceed = (callback: () => void) => {
+    if (!isLoggedIn) {
+      toast.error("Please login to add items to cart");
+      navigate("/auth/login");
+      return;
+    }
+    callback();
+  };
 
   const updateCart = async (componentId: string) => {
     const quantity = quantities.get(componentId) || 0;
@@ -111,6 +144,12 @@ const Components: React.FC = () => {
     change: number,
     available: number
   ) => {
+    if (!isLoggedIn) {
+      toast.error("Please login to select quantities");
+      navigate("/auth/login");
+      return;
+    }
+
     setQuantities((prev) => {
       const updated = new Map(prev);
       const currentQuantity = updated.get(componentId) || 0;
@@ -154,26 +193,68 @@ const Components: React.FC = () => {
               Browse and add components to your cart
             </p>
           </div>
-          {/* <Button
-            variant="outline"
-            className="bg-neutral-800 hover:bg-neutral-700 text-white rounded-full py-2 px-4 shadow-md flex items-center gap-2"
-            onClick={() => (window.location.href = "/cart")}
-          >
-            <ShoppingCart className="h-4 w-4" />
-            View Cart ({getTotalCartItems()})
-          </Button> */}
 
-          <Link
-            to="/cart"
-            className={`bg-neutral-800 hover:bg-neutral-700 text-white rounded-full py-2 px-4 shadow-md flex items-center gap-2 ${
-              isActive("/cart")
-                ? "text-blue-600 font-bold border-blue-600"
-                : "text-muted-foreground border-muted"
-            }`}
-          >
-            <ShoppingCart className="h-4 w-4" />
-            View Cart ({getTotalCartItems()})
-          </Link>
+          {isLoggedIn && (
+            <Link
+              to="/cart"
+              className={`bg-neutral-800 hover:bg-neutral-700 text-white rounded-full py-2 px-4 shadow-md flex items-center gap-2 ${
+                isActive("/cart")
+                  ? "text-blue-600 font-bold border-blue-600"
+                  : "text-muted-foreground border-muted"
+              }`}
+            >
+              <ShoppingCart className="h-4 w-4" />
+              View Cart ({getTotalCartItems()})
+            </Link>
+          )}
+        </div>
+
+        {/* Login prompt for non-logged-in users */}
+        {!isLoggedIn && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-medium text-blue-900">
+                  Ready to leand components?
+                </h3>
+                <p className="text-blue-700">
+                  Login to add items to your cart and place orders.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Link to="/auth/login">
+                  <Button variant="outline" size="sm">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/auth/signup">
+                  <Button size="sm">Sign Up</Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Search Bar */}
+        <div className="flex justify-center min-h-screen">
+          <div className="mb-8">
+            <div className="relative max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search components..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            {searchQuery && (
+              <p className="text-sm text-gray-600 mt-2 text-center">
+                {filteredComponents.length} component(s) found for "
+                {searchQuery}"
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Components by Type */}
@@ -286,11 +367,13 @@ const Components: React.FC = () => {
 
                         <Button
                           size="sm"
-                          onClick={() => updateCart(component._id)}
+                          onClick={() =>
+                            checkAuthAndProceed(() => updateCart(component._id))
+                          }
                           disabled={quantities.get(component._id) === 0}
                           className="bg-gray-900 hover:bg-gray-800"
                         >
-                          Add
+                          {isLoggedIn ? "Add" : "Login to Add"}
                         </Button>
                       </div>
                     </CardFooter>
@@ -306,15 +389,26 @@ const Components: React.FC = () => {
           ))}
         </div>
 
-        {components.length === 0 && (
+        {filteredComponents.length === 0 && !loading && (
           <div className="text-center py-12">
             <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No components found
+              {searchQuery ? "No components found" : "No components available"}
             </h3>
             <p className="text-gray-600">
-              Check back later for new components.
+              {searchQuery
+                ? `No components match "${searchQuery}". Try a different search term.`
+                : "Check back later for new components."}
             </p>
+            {searchQuery && (
+              <Button
+                variant="outline"
+                onClick={() => setSearchQuery("")}
+                className="mt-4"
+              >
+                Clear Search
+              </Button>
+            )}
           </div>
         )}
       </div>
