@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./Components.css";
 import {
   Card,
   CardContent,
@@ -196,17 +195,44 @@ const Components: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600">Loading components...</p>
+        <div className="text-center p-8 bg-white rounded-2xl shadow-xl border border-gray-100">
+          <div className="relative">
+            <Package className="h-16 w-16 text-gray-400 mx-auto mb-4 animate-pulse" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">
+            Loading Components
+          </h3>
+          <p className="text-gray-600">
+            Fetching the latest electronic components...
+          </p>
+          <div className="mt-4 flex justify-center">
+            <div className="flex space-x-2">
+              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+              <div
+                className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50 custom-scrollbar">
+      <div className="container mx-auto px-4 py-8 relative">
+        {/* Scroll Progress Indicator */}
+        <div className="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
+          <div
+            className="h-full bg-gray-800 transition-all duration-300"
+            style={{ width: "0%" }}
+          ></div>
+        </div>
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
@@ -275,8 +301,7 @@ const Components: React.FC = () => {
               </div>
               {searchQuery && (
                 <p className="text-sm text-gray-600 mt-2 text-center">
-                  {filteredComponents.length} component(s) found for "
-                  {searchQuery}"
+                  {filteredComponents.length} component(s) found for "{searchQuery}"
                 </p>
               )}
             </div>
@@ -327,7 +352,7 @@ const Components: React.FC = () => {
         </div>
 
         {/* Components by Type */}
-        <div className="space-y-8">
+        <div className="space-y-12">
           {Object.entries(groupedComponents).map(([type, typeComponents]) => {
             // Skip if category filter is active and doesn't match
             if (selectedCategory !== "all" && selectedCategory !== type) {
@@ -335,11 +360,9 @@ const Components: React.FC = () => {
             }
 
             return (
-              <div key={type}>
+              <div key={type} className="relative">
                 <div className="flex items-center gap-3 mb-6">
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    {type}
-                  </h2>
+                  <h2 className="text-2xl font-semibold text-gray-800">{type}</h2>
                   <Badge
                     variant="secondary"
                     className="bg-gray-100 text-gray-700"
@@ -358,7 +381,7 @@ const Components: React.FC = () => {
                   {typeComponents.map((component, index) => (
                     <Card
                       key={component._id}
-                      className="bg-white border-gray-200 hover:shadow-md transition-shadow animate-fade-in-scale"
+                      className="bg-white border-gray-200 hover:shadow-md transition-shadow"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <CardHeader className="pb-3">
@@ -452,6 +475,10 @@ const Components: React.FC = () => {
                         </div>
                       </CardFooter>
                     </Card>
+                          </Button>
+                        </div>
+                      </CardFooter>
+                    </Card>
                   ))}
                 </div>
 
@@ -465,14 +492,17 @@ const Components: React.FC = () => {
         </div>
 
         {filteredComponents.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="text-center py-16">
+            <div className="relative inline-block">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-600 opacity-20 rounded-full blur-xl"></div>
+              <Package className="relative h-20 w-20 text-gray-400 mx-auto mb-6 animate-pulse" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               {searchQuery || selectedCategory !== "all"
                 ? "No components found"
                 : "No components available"}
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
               {searchQuery
                 ? `No components match "${searchQuery}". Try a different search term.`
                 : selectedCategory !== "all"
@@ -480,9 +510,13 @@ const Components: React.FC = () => {
                 : "Check back later for new components."}
             </p>
             {(searchQuery || selectedCategory !== "all") && (
-              <div className="flex gap-3 justify-center mt-4">
+              <div className="flex gap-3 justify-center">
                 {searchQuery && (
-                  <Button variant="outline" onClick={() => setSearchQuery("")}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setSearchQuery("")}
+                    className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                  >
                     Clear Search
                   </Button>
                 )}
@@ -490,6 +524,7 @@ const Components: React.FC = () => {
                   <Button
                     variant="outline"
                     onClick={() => setSelectedCategory("all")}
+                    className="border-purple-300 text-purple-600 hover:bg-purple-50"
                   >
                     Show All Categories
                   </Button>
