@@ -9,7 +9,10 @@ const api = axios.create({
 
 // Attach access token to each request if available
 api.interceptors.request.use((config) => {
-  const accessToken = store.getState().auth.accessToken;
+  // Try to get token from store first, then fallback to localStorage
+  let accessToken =
+    store.getState().auth.accessToken || localStorage.getItem("accessToken");
+
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }

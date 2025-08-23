@@ -15,6 +15,10 @@ const authSlice = createSlice({
   reducers: {
     setAccessToken: (state, action) => {
       state.accessToken = action.payload;
+      // Persist token to localStorage
+      if (action.payload) {
+        localStorage.setItem("accessToken", action.payload);
+      }
     },
     logout: (state) => {
       state.accessToken = null;
@@ -23,6 +27,9 @@ const authSlice = createSlice({
       state.userProfile = null;
       state.isLoggedIn = false;
       state.loading = false;
+      // Clear localStorage
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("role");
     },
     persistLogin: (state, action) => {
       state.user = action.payload.username;
@@ -30,6 +37,10 @@ const authSlice = createSlice({
       state.role = action.payload.role;
       state.isLoggedIn = true;
       state.loading = false;
+      // Persist role to localStorage
+      if (action.payload.role) {
+        localStorage.setItem("role", action.payload.role);
+      }
     },
   },
 });

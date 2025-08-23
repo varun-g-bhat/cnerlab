@@ -1,14 +1,13 @@
 "use client";
 
-import type React from "react";
-
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "@/config/axiosInstance";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+
 import {
   Dialog,
   DialogContent,
@@ -38,6 +37,7 @@ import { Toaster, toast } from "sonner";
 import { Plus, Edit, Trash2, Package, Loader2 } from "lucide-react";
 // import AdminLayout from "@/layout/AdminLayout";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface Component {
   _id: string;
@@ -103,10 +103,7 @@ const AdminComponents: React.FC = () => {
 
   const fetchRole = async () => {
     try {
-      const response = await axios.get<IsAdmin>(
-        "https://cnerlab-1.onrender.com/api/v1/auth/isAdmin"
-      );
-
+      const response = await api.get<IsAdmin>("auth/isadmin");
       setRole(response.data.role); // Store the role
     } catch (error) {
       toast.error("Failed to fetch user role");
