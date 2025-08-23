@@ -3,7 +3,7 @@ import { store } from "@/store/store";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://cnerlab-1.onrender.com/api/v1",
+  baseURL: "/api/v1", // Updated to use relative URL for Vercel deployment
   withCredentials: true,
 });
 

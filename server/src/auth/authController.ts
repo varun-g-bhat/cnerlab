@@ -215,7 +215,7 @@ const logoutUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
-  const userId = extractUserIdFromRefreshToken(req);
+  const userId = extractUserIdFromAccessToken(req);
   if (!userId) {
     return next(createHttpError(401, "Unauthorized"));
   }
