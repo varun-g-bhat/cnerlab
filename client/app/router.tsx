@@ -483,7 +483,7 @@ const AppRouter = () => (
   //   </Routes>
   // </Router>
 
-  <Router basename="/cnerlab">
+  <Router>
     <Routes>
       <Route path="/" element={<RootWrapper />}>
         {/* Main app layout */}
