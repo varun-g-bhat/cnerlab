@@ -95,7 +95,7 @@ const CartPage: React.FC = () => {
   const fetchCartItems = async () => {
     try {
       const response = await axios.get(
-        "https://cnerlab-kf0v.onrender.com/api/v1/cart/user",
+        "https://cnerlab-1.onrender.com/api/v1/cart/user",
         { withCredentials: true }
       );
       setCartItems(response.data);
@@ -115,7 +115,7 @@ const CartPage: React.FC = () => {
     setUpdating(componentId);
     try {
       await axios.put(
-        "https://cnerlab-kf0v.onrender.com/api/v1/cart/user",
+        "https://cnerlab-1.onrender.com/api/v1/cart/user",
         {
           componentId,
           quantity: newQuantity,
@@ -142,7 +142,7 @@ const CartPage: React.FC = () => {
     setUpdating(componentId);
     try {
       await axios.delete(
-        "https://cnerlab-kf0v.onrender.com/api/v1/cart/user/component",
+        "https://cnerlab-1.onrender.com/api/v1/cart/user/component",
         {
           data: { componentId },
           withCredentials: true,
@@ -163,7 +163,7 @@ const CartPage: React.FC = () => {
   const clearCart = async () => {
     setUpdating("clear");
     try {
-      await axios.delete("https://cnerlab-kf0v.onrender.com/api/v1/cart/user", {
+      await axios.delete("https://cnerlab-1.onrender.com/api/v1/cart/user", {
         withCredentials: true,
       });
       setCartItems([]);
@@ -186,7 +186,7 @@ const CartPage: React.FC = () => {
       for (const item of cartItems) {
         try {
           await axios.post(
-            "https://cnerlab-kf0v.onrender.com/api/v1/permission/user/add",
+            "https://cnerlab-1.onrender.com/api/v1/permission/user/add",
             {
               componentId: item.componentId._id,
               quantity: item.quantity,

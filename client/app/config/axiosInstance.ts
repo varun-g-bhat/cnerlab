@@ -3,7 +3,7 @@ import { store } from "@/store/store";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://cnerlab-kf0v.onrender.com/api/v1",
+  baseURL: "https://cnerlab-1.onrender.com/api/v1",
   withCredentials: true,
 });
 
@@ -26,7 +26,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          "https://cnerlab-kf0v.onrender.com/api/v1/auth/refresh",
+          "https://cnerlab-1.onrender.com/api/v1/auth/refresh",
           {},
           { withCredentials: true }
         );

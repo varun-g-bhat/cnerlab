@@ -73,7 +73,7 @@ const AdminPurchaseHistoryPage: React.FC = () => {
   const fetchPurchases = async () => {
     try {
       const response = await axios.get(
-        "https://cnerlab-kf0v.onrender.com/api/v1/purchase/"
+        "https://cnerlab-1.onrender.com/api/v1/purchase/"
       );
 
       setPurchases(response.data);
@@ -108,7 +108,7 @@ const AdminPurchaseHistoryPage: React.FC = () => {
     setProcessingId(purchaseId);
     try {
       await axios.post(
-        `https://cnerlab-kf0v.onrender.com/api/v1/purchase/renewal/${purchaseId}`
+        `https://cnerlab-1.onrender.com/api/v1/purchase/renewal/${purchaseId}`
       );
       toast.success("Purchase renewed successfully");
 
@@ -124,7 +124,7 @@ const AdminPurchaseHistoryPage: React.FC = () => {
     setProcessingId(purchaseId);
     try {
       await axios.post(
-        `https://cnerlab-kf0v.onrender.com/api/v1/purchase/return/${purchaseId}`
+        `https://cnerlab-1.onrender.com/api/v1/purchase/return/${purchaseId}`
       );
       toast.success("Item marked as returned");
       fetchPurchases();

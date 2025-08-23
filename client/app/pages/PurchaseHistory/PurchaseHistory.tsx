@@ -59,7 +59,7 @@ const PurchaseHistoryPage: React.FC = () => {
   const fetchUserPurchases = async () => {
     try {
       const response = await axios.get(
-        "https://cnerlab-kf0v.onrender.com/api/v1/purchase/user"
+        "https://cnerlab-1.onrender.com/api/v1/purchase/user"
       );
       setPurchases(
         Array.isArray(response.data) ? response.data : [response.data]

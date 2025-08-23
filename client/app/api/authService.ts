@@ -1,7 +1,7 @@
 import type { signupUser } from "@/validation/userSchema";
 import axios from "axios";
 
-const BASE_URL = "https://cnerlab-kf0v.onrender.com/api/v1";
+const BASE_URL = "https://cnerlab-1.onrender.com/api/v1";
 
 const apiClient = axios.create({
   baseURL: BASE_URL,

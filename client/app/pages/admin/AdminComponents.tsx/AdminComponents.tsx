@@ -104,7 +104,7 @@ const AdminComponents: React.FC = () => {
   const fetchRole = async () => {
     try {
       const response = await axios.get<IsAdmin>(
-        "https://cnerlab-kf0v.onrender.com/api/v1/auth/isAdmin"
+        "https://cnerlab-1.onrender.com/api/v1/auth/isAdmin"
       );
 
       setRole(response.data.role); // Store the role
@@ -116,7 +116,7 @@ const AdminComponents: React.FC = () => {
   const fetchComponents = async () => {
     try {
       const response = await axios.get(
-        "https://cnerlab-kf0v.onrender.com/api/v1/components/"
+        "https://cnerlab-1.onrender.com/api/v1/components/"
       );
       setComponents(response.data);
     } catch (error) {
@@ -147,7 +147,7 @@ const AdminComponents: React.FC = () => {
     setSubmitting(true);
     try {
       await axios.post(
-        "https://cnerlab-kf0v.onrender.com/api/v1/components/",
+        "https://cnerlab-1.onrender.com/api/v1/components/",
         formData
       );
       toast.success("Component added successfully");
@@ -171,7 +171,7 @@ const AdminComponents: React.FC = () => {
     setSubmitting(true);
     try {
       await axios.put(
-        `https://cnerlab-kf0v.onrender.com/api/v1/components/${editingComponent.componentName}`,
+        `https://cnerlab-1.onrender.com/api/v1/components/${editingComponent.componentName}`,
         {
           componentType: formData.componentType,
           image_url: formData.image_url,
@@ -193,7 +193,7 @@ const AdminComponents: React.FC = () => {
   const handleDelete = async (componentName: string) => {
     try {
       await axios.delete(
-        `https://cnerlab-kf0v.onrender.com/api/v1/components/${componentName}`
+        `https://cnerlab-1.onrender.com/api/v1/components/${componentName}`
       );
       toast.success("Component deleted successfully");
       fetchComponents();

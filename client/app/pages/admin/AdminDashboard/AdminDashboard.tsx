@@ -87,16 +87,16 @@ export default function AdminDashboard() {
         const [componentsResponse, activeUsersResponse, approvalRateResponse] =
           await Promise.all([
             axios.get(
-              "https://cnerlab-kf0v.onrender.com/api/v1/components/all/count"
+              "https://cnerlab-1.onrender.com/api/v1/components/all/count"
             ),
             axios.get(
-              "https://cnerlab-kf0v.onrender.com/api/v1/statistics/usercount"
+              "https://cnerlab-1.onrender.com/api/v1/statistics/usercount"
             ),
             100,
           ]);
 
         const response = await axios.get(
-          "https://cnerlab-kf0v.onrender.com/api/v1/permission/",
+          "https://cnerlab-1.onrender.com/api/v1/permission/",
           { withCredentials: true }
         );
 

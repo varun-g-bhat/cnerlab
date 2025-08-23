@@ -96,7 +96,7 @@ const Components: React.FC = () => {
   const fetchComponents = async () => {
     try {
       const response = await axios.get(
-        "https://cnerlab-kf0v.onrender.com/api/v1/components/"
+        "https://cnerlab-1.onrender.com/api/v1/components/"
       );
       setComponents(response.data);
     } catch (error) {
@@ -109,7 +109,7 @@ const Components: React.FC = () => {
   const fetchAllComponentTypes = async () => {
     try {
       const response = await axios.get(
-        "https://cnerlab-kf0v.onrender.com/api/v1/components/all/types"
+        "https://cnerlab-1.onrender.com/api/v1/components/all/types"
       );
       setAllComponentTypes(response.data);
     } catch (error) {
@@ -151,7 +151,7 @@ const Components: React.FC = () => {
     try {
       if (isNewItem) {
         await axios.post(
-          "https://cnerlab-kf0v.onrender.com/api/v1/cart/user",
+          "https://cnerlab-1.onrender.com/api/v1/cart/user",
           {
             componentId,
             quantity,
@@ -160,7 +160,7 @@ const Components: React.FC = () => {
         );
       } else {
         await axios.put(
-          "https://cnerlab-kf0v.onrender.com/api/v1/cart/user",
+          "https://cnerlab-1.onrender.com/api/v1/cart/user",
           {
             componentId,
             quantity,
