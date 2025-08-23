@@ -47,6 +47,7 @@ const Components: React.FC = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [showFloatingCart, setShowFloatingCart] = useState(false);
+  const [allComponentTypes, setAllComponentTypes] = useState<string[]>([]);
 
   const navigate = useNavigate();
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
@@ -55,6 +56,7 @@ const Components: React.FC = () => {
 
   useEffect(() => {
     fetchComponents();
+    fetchAllComponentTypes();
 
     // Add scroll listener for floating cart
     const handleScroll = () => {
@@ -101,6 +103,17 @@ const Components: React.FC = () => {
       toast.error("Failed to fetch components");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAllComponentTypes = async () => {
+    try {
+      const response = await axios.get(
+        "https://cnerlab-kf0v.onrender.com/api/v1/components/all/types"
+      );
+      setAllComponentTypes(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch component types");
     }
   };
 
@@ -291,7 +304,7 @@ const Components: React.FC = () => {
                   className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Categories</option>
-                  {Object.keys(groupedComponents).map((type) => (
+                  {allComponentTypes.map((type) => (
                     <option key={type} value={type}>
                       {type}
                     </option>

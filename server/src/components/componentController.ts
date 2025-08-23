@@ -109,6 +109,19 @@ const getComponentsCount = async (
   }
 };
 
+const getComponentsType = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const componentTypes = await componentModel.distinct("componentType");
+    res.status(200).json(componentTypes);
+  } catch (error) {
+    next(createHttpError(500, "Error fetching component types"));
+  }
+};
+
 export {
   getAllComponents,
   getComponentsByType,
@@ -116,4 +129,5 @@ export {
   updateComponent,
   deleteComponent,
   getComponentsCount,
+  getComponentsType,
 };
