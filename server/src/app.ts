@@ -28,7 +28,9 @@ const io = new Server(server, {
 app.use(
   cors({
     credentials: true,
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL || "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   })
 );
 
@@ -50,4 +52,4 @@ app.use("/api/v1/statistics", statisticsRouter);
 app.use("/api/v1/reminders", reminderRouter);
 app.use(globalErrorHandler);
 
-export { server, io };
+export { server, io, app };
